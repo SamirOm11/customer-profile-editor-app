@@ -1,0 +1,39 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "2529310f26623bb050124de6992cb551"
+application_url = "https://funky-sf-hobby-courtesy.trycloudflare.com"
+embedded = false
+name = "Profile-editor-app"
+handle = "profile-editor-app"
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-04"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,write_customers"
+
+[auth]
+redirect_urls = [
+  "https://funky-sf-hobby-courtesy.trycloudflare.com/auth/callback",
+  "https://funky-sf-hobby-courtesy.trycloudflare.com/auth/shopify/callback",
+  "https://funky-sf-hobby-courtesy.trycloudflare.com/api/auth/callback"
+]
+
+[customer_account_ui_extensions]
+profile_editor = "app/extensions/customer-account/profile-editor"
+
+[pos]
+embedded = false

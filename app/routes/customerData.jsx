@@ -1,27 +1,39 @@
-// app/routes/edit-profile.tsx
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData, Form } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
-import { CUSTOMER_QUERY } from "../graphql/queries/customerDetails";
-import { UPDATE_CUSTOMER_MUTATION } from "../graphql/queries/customerupdate";
+
+const CUSTOMER_QUERY = `query getCustomer($id: ID!) {
+  customer(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    phone
+  }
+}`;
+
+const UPDATE_MUTATION = `mutation customerUpdate($input: CustomerInput!) {
+  customerUpdate(input: $input) {
+    customer { id }
+    userErrors { field message }
+  }
+}`;
 
 export const loader = async ({ request }) => {
   const { admin } = await authenticate.public.appProxy(request);
   const url = new URL(request.url);
-  console.log("🚀 ~ loader ~ admin:", admin)
+  console.log('url: ', url);
   const customerId = url.searchParams.get("customerId");
-  console.log("🚀 ~ loader ~ customerId:", customerId)
+  console.log('customerId: ', customerId);
 
-  if (!customerId) throw new Error("Missing customerId");
+  if (!customerId) throw new Error("Customer ID required");
 
-  const res = await admin.graphql(CUSTOMER_QUERY, {
-    variables: { id: customerId },
+  const response = await admin.graphql(CUSTOMER_QUERY, {
+    variables: { id: customerId }
   });
-  console.log("🚀 ~ loader ~ res:", res)
 
-
-  const jsonData = await response.json();
-  return json({ customer: jsonData.data.customer });
+  const { data } = await response.json();
+  return json({ customer: data.customer });
 };
 
 export const action = async ({ request }) => {
@@ -29,40 +41,78 @@ export const action = async ({ request }) => {
   const formData = await request.formData();
 
   const input = {
-    id: formData.get("id"),
+    id: `gid://shopify/Customer/${formData.get("id")}`,
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
     email: formData.get("email"),
-    phone: formData.get("phone"),
+    phone: formData.get("phone")
   };
 
-  const response = await admin.graphql(UPDATE_CUSTOMER_MUTATION, { variables: { input } });
-  const result = await response.json();
+  const response = await admin.graphql(UPDATE_MUTATION, { variables: { input } });
+  const { data } = await response.json();
 
-  if (result.data.customerUpdate.userErrors.length > 0) {
-    return json({ error: result.data.customerUpdate.userErrors }, { status: 400 });
+  if (data.customerUpdate.userErrors?.length > 0) {
+    return json({ errors: data.customerUpdate.userErrors }, { status: 400 });
   }
 
-  return redirect("/edit-profile/success");
+  return redirect("/account?updated=true");
 };
+
 
 export default function EditProfilePage() {
   const { customer } = useLoaderData();
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Edit Your Profile</h2>
-      <Form method="post">
-        <input type="hidden" name="id" value={customer.id} />
-        <label>First Name</label>
-        <input name="firstName" defaultValue={customer.firstName} className="border p-2 w-full" />
-        <label>Last Name</label>
-        <input name="lastName" defaultValue={customer.lastName} className="border p-2 w-full" />
-        <label>Email</label>
-        <input name="email" defaultValue={customer.email} className="border p-2 w-full" />
-        <label>Phone</label>
-        <input name="phone" defaultValue={customer.phone} className="border p-2 w-full" />
-        <button type="submit" className="bg-blue-500 text-white p-2 mt-4 rounded">Save</button>
+    <div className="max-w-md mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+      
+      <Form method="post" className="space-y-4">
+        <input type="hidden" name="id" value={customer.id.split('/').pop()} />
+        
+        <div>
+          <label className="block mb-1">First Name</label>
+          <input
+            name="firstName"
+            defaultValue={customer.firstName || ''}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        
+        <div>
+          <label className="block mb-1">Last Name</label>
+          <input
+            name="lastName"
+            defaultValue={customer.lastName || ''}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        
+        <div>
+          <label className="block mb-1">Email</label>
+          <input
+            type="email"
+            name="email"
+            defaultValue={customer.email || ''}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        
+        <div>
+          <label className="block mb-1">Phone</label>
+          <input
+            type="tel"
+            name="phone"
+            defaultValue={customer.phone || ''}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+        >
+          Save Changes
+        </button>
       </Form>
     </div>
   );

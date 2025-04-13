@@ -1,15 +1,14 @@
 import { authenticate } from "../shopify.server";
-import { CREATE_CUSTOMER_ACCESS_TOKEN } from "../graphql/Mutations/customeraccesstokencreate";
 import { json } from "@remix-run/node";
 import { CUSTOMER_QUERY as customerquery } from "../graphql/queries/customerDetails";
 
 export const action = async ({ request }) => {
   const { admin, session } = await authenticate.public.appProxy(request);
+  console.log('session: ', session);
   const url = new URL(request.url);
   const customerId = url.searchParams.get("customerId");
   console.log("🚀 ~ action ~ customerId:", customerId);
   try {
-    console.log;
     const response = await admin.graphql(customerquery, {
       variables: { id: customerId },
     });

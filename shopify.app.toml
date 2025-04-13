@@ -1,10 +1,10 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "628344578bd9fda25e03a69def199006"
-application_url = "https://suddenly-scott-among-and.trycloudflare.com"
-embedded = true
+client_id = "556480f69de683393f6d842d6392af62"
 name = "profile-editor-app"
-handle = "profile-editor-app-1"
+handle = "profile-editor-app"
+application_url = "https://reliability-attachments-distinction-gpl.trycloudflare.com"
+embedded = true
 
 [build]
 include_config_on_deploy = true
@@ -19,13 +19,13 @@ scopes = "read_customers,write_customers"
 
 [auth]
 redirect_urls = [
-  "https://suddenly-scott-among-and.trycloudflare.com/auth/callback",
-  "https://suddenly-scott-among-and.trycloudflare.com/auth/shopify/callback",
-  "https://suddenly-scott-among-and.trycloudflare.com/api/auth/callback"
+  "https://reliability-attachments-distinction-gpl.trycloudflare.com/auth/callback",
+  "https://reliability-attachments-distinction-gpl.trycloudflare.com/auth/shopify/callback",
+  "https://reliability-attachments-distinction-gpl.trycloudflare.com/api/auth/callback"
 ]
 
 [app_proxy]
-url = "https://suddenly-scott-among-and.trycloudflare.com"
+url = "https://reliability-attachments-distinction-gpl.trycloudflare.com"
 subpath = "om-profile-editor"
 prefix = "apps"
 

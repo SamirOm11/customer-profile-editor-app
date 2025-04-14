@@ -1,14 +1,10 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "556480f69de683393f6d842d6392af62"
-name = "profile-editor-app"
-handle = "profile-editor-app"
-application_url = "https://reliability-attachments-distinction-gpl.trycloudflare.com"
+client_id = "628344578bd9fda25e03a69def199006"
+application_url = "https://rn-son-loaded-hz.trycloudflare.com"
 embedded = true
-
-[build]
-include_config_on_deploy = true
-automatically_update_urls_on_dev = true
+name = "profile-editor-app"
+handle = "profile-editor-app-1"
 
 [webhooks]
 api_version = "2025-04"
@@ -19,15 +15,19 @@ scopes = "read_customers,write_customers"
 
 [auth]
 redirect_urls = [
-  "https://reliability-attachments-distinction-gpl.trycloudflare.com/auth/callback",
-  "https://reliability-attachments-distinction-gpl.trycloudflare.com/auth/shopify/callback",
-  "https://reliability-attachments-distinction-gpl.trycloudflare.com/api/auth/callback"
+  "https://rn-son-loaded-hz.trycloudflare.com/auth/callback",
+  "https://rn-son-loaded-hz.trycloudflare.com/auth/shopify/callback",
+  "https://rn-son-loaded-hz.trycloudflare.com/api/auth/callback"
 ]
 
 [app_proxy]
-url = "https://reliability-attachments-distinction-gpl.trycloudflare.com"
+url = "https://rn-son-loaded-hz.trycloudflare.com"
 subpath = "om-profile-editor"
 prefix = "apps"
 
 [pos]
 embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true

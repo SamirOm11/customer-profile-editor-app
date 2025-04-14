@@ -15,3 +15,9 @@ export const UPDATE_CUSTOMER_MUTATION = `
     }
   }
 `;
+// const UPDATE_MUTATION = `mutation customerUpdate($input: CustomerInput!) {
+//   customerUpdate(input: $input) {
+//     customer { id }
+//     userErrors { field message }
+//   }
+// }`;

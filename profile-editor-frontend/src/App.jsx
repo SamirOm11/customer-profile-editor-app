@@ -1,8 +1,14 @@
 import { createPortal } from "react-dom";
 import AccountEditor from "./Components/AccountEditor";
+import UpdateForm from "./Components/UpdateForm";
 
 function App() {
-  return <>{renderPortal(<AccountEditor />, "om-customer-account-editor")}</>;
+  return (
+    <>
+      {renderPortal(<AccountEditor />, "om-customer-account-editor")}
+      {renderPortal(<UpdateForm />, "update-profile-form")}
+    </>
+  );
 }
 
 export default App;

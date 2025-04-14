@@ -1,11 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
-if (process.env.NODE_ENV !== "production") {
-  if (!global.prismaGlobal) {
-    global.prismaGlobal = new PrismaClient();
+export const dbconnection = () => {
+  try {
+    const dbURI = "mongodb://localhost:27017/profile-editor-app";
+    mongoose.connect(dbURI);
+    console.log("connection success");
+  } catch (error) {
+    console.log("connection error", error);
   }
-}
-
-const prisma = global.prismaGlobal ?? new PrismaClient();
-
-export default prisma;
+};

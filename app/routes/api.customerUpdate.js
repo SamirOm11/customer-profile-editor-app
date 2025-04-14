@@ -1,25 +1,46 @@
 import { authenticate } from "../shopify.server";
 import { json } from "@remix-run/node";
-import { CUSTOMER_QUERY as customerquery } from "../graphql/queries/customerDetails";
 
+export const UPDATE_MUTATION = `
+  mutation customerUpdate($input: CustomerInput!) {
+    customerUpdate(input: $input) {
+      customer {
+        id
+        firstName
+        lastName
+        email
+        phone
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
 export const action = async ({ request }) => {
   const { admin, session } = await authenticate.public.appProxy(request);
-  console.log('session: ', session);
-  const url = new URL(request.url);
-  const customerId = url.searchParams.get("customerId");
-  console.log("🚀 ~ action ~ customerId:", customerId);
-  try {
-    const response = await admin.graphql(customerquery, {
-      variables: { id: customerId },
-    });
+  const formData = await request.formData();
+  console.log("🚀 ~ action ~ formData:", formData);
 
-    console.log("🚀 ~ loader ~ res:", response);
-    console.log("🚀 ~ action ~ response:", response);
-    const result = await response.json();
-    console.log("🚀 ~ action ~ result:", result);
-    return json({ status: 200 }, { customerAccessToken: result });
-  } catch (error) {
-    console.log("🚀 ~ action ~ error:", error);
-    return { success: false, message: "Error on CustomerUpdate action." };
+  const input = {
+    id: formData.get("id"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
+    email: formData.get("email"),
+    phone: formData.get("phone"),
+  };
+
+  const response = await admin.graphql(UPDATE_MUTATION, {
+    variables: { input },
+  });
+  console.log("🚀 ~ action ~ response:", response);
+  const { data } = await response.json();
+
+  console.log("🚀 ~ action ~ data:", data);
+  if (data.customerUpdate.userErrors?.length > 0) {
+    return json({ errors: data.customerUpdate.userErrors }, { status: 400 });
   }
+  return json({ status: 200 }, { message: "Profile successfully updated" });
+  // return redirect("/account?updated=true");
 };
